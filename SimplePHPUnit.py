@@ -27,14 +27,15 @@ class SimplePhpUnitCommand(sublime_plugin.WindowCommand):
         super(SimplePhpUnitCommand, self).__init__(*args, **kwargs)
         settings = sublime.load_settings('SimplePHPUnit.sublime-settings')
         self.phpunit_path = settings.get('phpunit_path')
+        self.phpunit_xml_path = settings.get('phpunit_xml_path')
 
     def run(self, *args, **kwargs):
         try:
             # The first folder needs to be the Laravel Project
-            self.PROJECT_PATH = self.window.folders()[0]
+            self.PROJECT_PATH = self.window.folders()[0] + self.phpunit_xml_path
             if os.path.isfile("%s" % os.path.join(self.PROJECT_PATH, 'phpunit.xml')) or os.path.isfile("%s" % os.path.join(self.PROJECT_PATH, 'phpunit.xml.dist')):
                 self.params = kwargs.get('params', False)
-                self.args = [self.phpunit_path, '--stderr']
+                self.args = [self.phpunit_path, '--stderr', '.']
                 if self.params is True:
                     self.window.show_input_panel('Params:', '', self.on_params, None, None)
                 else:
